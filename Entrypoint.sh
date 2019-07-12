@@ -40,10 +40,10 @@ for service in $(echo $config | jq -c .services[]); do
         role=$(echo $service | jq -r .role)
         check_http=$(echo $service | jq -r .check.address)
         check_interval=$(echo $service | jq -r .check.interval)
+	src="templates/service.json"
 
 	## classic mode
 	if [[ $role == "master" ]]; then tags='["master","'$active_domain_prefix'"]' ;else if [[ $role == "slave" ]]; then tags='["slave"]' ; else tags='[""]' ;fi ;fi
-        src="templates/service.json"
         dest="/var/consul/services/$id.json"
         cp $src $dest
         sed -i -e "s/{{ item.id }}/$id/g" $dest
@@ -56,7 +56,6 @@ for service in $(echo $config | jq -c .services[]); do
 
         ##ha mode
 	if [[ $role == "master" ]]; then tags='["master"]' ;else if [[ $role == "slave" ]]; then tags='["slave","'$active_domain_prefix'"]' ; else tags='[""]' ;fi ;fi
-        src="templates/service_ha.json"
         dest="/var/consul/services/"$id"_ha.json"
         cp $src $dest
         sed -i -e "s/{{ item.id }}/$id/g" $dest
@@ -73,4 +72,6 @@ for service in $(echo $config | jq -c .services[]); do
 
 done
 
-exec consul-template -config "/var/consul/config-template.hcl"
+exec consul-template -config "/var/consul/config-template.hcl" &
+
+exec consul monitor -http-addr=http://127.0.0.1:$port_http -token=$master_token 
