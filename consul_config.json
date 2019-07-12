@@ -1,0 +1,36 @@
+{
+  "master_token": "13dde096-5027-4904-a068-0e428680bffc",
+  "datacenter": "Datacenter-Paris",
+  "dns_domain": "domain.exemple",
+  "active_domain_prefix": "active",
+  "ports": {
+    "http": 80,
+    "https": 443,
+    "dns": 53
+  },
+  "services": [
+    {
+      "name": "project01",
+      "id": "project01_a",
+      "role": "master",
+      "address": "192.168.1.49",
+      "port": 80,
+      "check": {
+        "address": "http://192.168.1.49/",
+        "interval": "5s"
+      }
+    },
+    {
+      "name": "project01",
+      "id": "project01_b",
+      "role": "slave",
+      "address": "192.168.1.52",
+      "port": 80,
+      "check": {
+        "address": "http://192.168.1.52/",
+        "interval": "5s"
+      }
+    }
+  ]
+}
+

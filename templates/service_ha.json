@@ -1,0 +1,11 @@
+{
+  "id": "{{ item.id }}",
+  "name": "{{ item.name }}",
+  "address": "{{ item.address }}",
+  "port": {{ item.port }},
+  "Tags": {{ item.tags }},
+  "check": {
+    "http": "{{ item.check.address }}",
+    "interval": "{{ item.check.interval }}"
+  }
+}

@@ -1,0 +1,29 @@
+{
+    "bootstrap": true,
+    "advertise_addr": "{{ ip_add }}",
+    "server" : true,
+    "bind_addr": "0.0.0.0",
+    "client_addr": "0.0.0.0",
+    "leave_on_terminate" : true,
+    "skip_leave_on_interrupt" : false,
+    "datacenter" : "{{ item.datacenter }}",
+    "data_dir" : "/var/consul/data",
+    "encrypt" : "IYnoeTMh+Lm7HDn7Rsq+WQ==",
+    "enable_script_checks": true,
+    "disable_update_check":true,
+    "domain":"{{ item.dns_domain }}",
+    "enable_syslog": true,
+    "log_level": "info",
+    "ui": true,
+    "acl_datacenter":"{{ item.datacenter }}",
+    "acl_default_policy":"deny",
+    "acl_down_policy":"deny",
+    "acl_master_token":"{{ item.master_token }}",
+    "acl_agent_token":"{{ item.master_token }}",
+    "acl_token":"anonymous",
+    "ports": {
+        "http": {{ item.port.http }},
+        "https": {{ item.port.https }},
+        "dns": {{ item.port.dns }}
+    }
+}

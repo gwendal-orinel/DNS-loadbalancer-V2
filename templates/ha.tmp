@@ -1,0 +1,20 @@
+export CONSUL_TOKEN={{ item.master_token }}
+[[ range $key, services ]][[ $sname := .Name ]][[ if not (in $sname "consul") ]]
+#Passage de master à slave
+[[range service $sname "critical"]]#[[ .ID ]] est HS
+[[ $name := .Name ]][[ $Sid := .ID ]][[ $tags := .Tags ]][[ if in $tags "master" ]][[range service $name ]][[ $stags := .Tags ]][[ if in $stags "slave" ]][[ if not (in $stags "{{ item.active_domain_prefix }}") ]]
+#[[ .ID ]] devient le master
+curl -XPUT -d @/var/consul/services/[[ .ID ]]_ha.json http://127.0.0.1:80/v1/agent/service/register?token=$CONSUL_TOKEN
+#[[ $Sid  ]] n'est plus considérer comme actif
+curl -XPUT -d @/var/consul/services/[[ $Sid ]]_ha.json http://127.0.0.1:80/v1/agent/service/register?token=$CONSUL_TOKEN
+[[end]][[end]][[end]][[end]][[end]]
+
+#Retour de slave à master
+[[range service $sname "passing"]][[ $name := .Name ]][[ $Sid := .ID ]][[ $tags := .Tags ]][[ if in $tags "master" ]][[range service $name ]][[ $stags := .Tags ]][[ if in $stags "slave" ]][[ if in $stags "{{ item.active_domain_prefix }}" ]]
+#[[ $Sid  ]] redevient le master
+curl -XPUT -d @/var/consul/services/[[ $Sid ]].json http://127.0.0.1:80/v1/agent/service/register?token=$CONSUL_TOKEN
+#[[ .ID ]] redevient slave
+curl -XPUT -d @/var/consul/services/[[ .ID ]].json http://127.0.0.1:80/v1/agent/service/register?token=$CONSUL_TOKEN
+
+[[end]][[end]][[end]][[end]][[end]][[end]][[end]]
+
